@@ -15,17 +15,19 @@ Things to consider when building a typing game:
 export type GameMode = "Timed(60s)" | "Passage";
 export type GameStatus = "idle" | "running" | "finished";
 export type GameResults = "correct" | "incorrect";
-export type GameDiff = "Easy" | "Medium" | "Hard";
+export type GameDiff = "easy" | "medium" | "hard";
 
 type GameState = {
   characters: string[];
-  currentIndex: number;
+
   data: string;
   time: number;
   gameMode: GameMode;
   gameDiff: GameDiff;
   typingTime: number;
   accuracy: number;
+  currentIndex: number;
+  isFirstTime: boolean;
   gameStatus: GameStatus;
   wpm: number;
   results: GameResults[];
@@ -59,13 +61,18 @@ export function GameContextProvider({
   const [time, setTime] = useState(0);
   const [typingTime, setTypingTime] = useState(0);
   const [gameMode, setGameMode] = useState<GameMode>("Timed(60s)");
-  const [gameDiff, setGameDiff] = useState<GameDiff>("Easy");
+  const [gameDiff, setGameDiff] = useState<GameDiff>("easy");
   const [accuracy, setAccuracy] = useState(0);
   const [wpm, setWpm] = useState(0);
 
   const [data, setData] = useState("");
 
   const [gameStatus, setGameStatus] = useState<GameStatus>("idle");
+
+  const isFirstTime = !localStorage.getItem("first_time");
+  if (isFirstTime) {
+    localStorage.setItem("first_time", "true");
+  }
 
   return (
     <GameContext.Provider
@@ -76,6 +83,7 @@ export function GameContextProvider({
         setCharacters,
         data,
         setData,
+        isFirstTime,
         typingTime,
         setTypingTime,
         gameStatus,

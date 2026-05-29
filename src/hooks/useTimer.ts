@@ -14,7 +14,10 @@ export function useTimer(mode: GameMode, status: GameStatus) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (mode === "Passage" || status !== "running") return;
+    if (mode === "Passage" || status !== "running") {
+      setTime(0);
+    return;
+    }
 
     setTime(60);
     timerRef.current = setInterval(() => {
