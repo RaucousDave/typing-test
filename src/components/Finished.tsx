@@ -5,6 +5,7 @@ import { useStats } from "../hooks/useStats";
 export default function Finished() {
   const { results, wpm, accuracy, setGameStatus, isFirstTime } = useGame();
   useStats();
+
   const correct = results.filter((result) => result === "correct").length;
   const incorrect = results.length - correct;
   const finishedStats = [
@@ -24,12 +25,12 @@ export default function Finished() {
   return (
     <div className="flex flex-col relative justify-center  overflow-hidden gap-5 items-center">
       <img
-        src="/public/assets/pattern-star-1.svg"
+        src="/assets/pattern-star-1.svg"
         className="absolute right-4"
         alt=""
       />
       <img
-        src="/public/assets/pattern-star-2.svg"
+        src="/assets/pattern-star-2.svg"
         className="absolute left-4 top-4"
         alt=""
       />

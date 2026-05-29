@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useRef, useState, type RefObject } from "react";
 
 /* 
 Things to consider when building a typing game: 
@@ -19,12 +19,14 @@ export type GameDiff = "easy" | "medium" | "hard";
 
 type GameState = {
   characters: string[];
-
+  error: string;
   data: string;
   time: number;
+
   gameMode: GameMode;
   gameDiff: GameDiff;
   typingTime: number;
+  errorRef: RefObject<string>;
   accuracy: number;
   currentIndex: number;
   isFirstTime: boolean;
@@ -37,7 +39,9 @@ type GameActions = {
   setData: React.Dispatch<React.SetStateAction<string>>;
   setCharacters: React.Dispatch<React.SetStateAction<string[]>>;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+  setError: React.Dispatch<React.SetStateAction<string>>;
   setTime: React.Dispatch<React.SetStateAction<number>>;
+  // setHighScore: React.Dispatch<React.SetStateAction<number>>
   setGameMode: React.Dispatch<React.SetStateAction<GameMode>>;
   setGameDiff: React.Dispatch<React.SetStateAction<GameDiff>>;
   setGameStatus: React.Dispatch<React.SetStateAction<GameStatus>>;
@@ -64,8 +68,15 @@ export function GameContextProvider({
   const [gameDiff, setGameDiff] = useState<GameDiff>("easy");
   const [accuracy, setAccuracy] = useState(0);
   const [wpm, setWpm] = useState(0);
+  const [error, setError] = useState("");
+  const beatHighScore = !localStorage.getItem("high_score");
+
+  if (beatHighScore) {
+    localStorage.setItem("high_score", "0");
+  }
 
   const [data, setData] = useState("");
+  const errorRef = useRef<string | null>(null);
 
   const [gameStatus, setGameStatus] = useState<GameStatus>("idle");
 
@@ -79,9 +90,12 @@ export function GameContextProvider({
       value={{
         characters,
         currentIndex,
+        errorRef,
         setCurrentIndex,
         setCharacters,
         data,
+        error,
+        setError,
         setData,
         isFirstTime,
         typingTime,

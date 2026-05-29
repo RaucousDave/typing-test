@@ -6,6 +6,7 @@ export default function Stats() {
   const {
     time,
     setGameMode,
+    gameStatus,
     setGameStatus,
     gameMode,
     wpm,
@@ -16,9 +17,13 @@ export default function Stats() {
   } = useGame();
 
   const statistics = [
-    { text: "WPM", value: wpm },
-    { text: "Accuracy", value: `${accuracy}%` },
-    { text: "Time", value: time },
+    { text: "WPM", style: "text-neutral-50", value: wpm },
+    { text: "Accuracy", style: "text-red-500", value: `${accuracy}%` },
+    {
+      text: "Time",
+      style: `${gameStatus !== "running" ? "text-neutral-50" : "text-yellow-500"}`,
+      value: `0:${time < 10 ? "0" + time : time}`,
+    },
   ];
   const difficulty = ["Easy", "Medium", "Hard"];
   const modes = ["Timed(60s)", "Passage"];
@@ -43,7 +48,7 @@ export default function Stats() {
         {statistics.map((statistic, i) => (
           <p key={i} className="text-neutral-500 s">
             {statistic.text}:
-            <span className="text-neutral-50 font-semibold ml-4">
+            <span className={`font-semibold ml-4 ${statistic.style}`}>
               {statistic.value}
             </span>
           </p>

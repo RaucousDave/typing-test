@@ -2,17 +2,24 @@ import { useEffect, useRef } from "react";
 import wordLibrary from "../assets/data.json";
 import type { GameDiff, GameStatus } from "../context/GameContext";
 import { useGame } from "./useGame";
-import toast from "react-hot-toast";
 
 interface Passage {
   text: string;
 }
 
 export function useWordEngine(diff: GameDiff, status: GameStatus) {
-  const { data, setData, setCurrentIndex, setGameStatus, setResults } =
-    useGame();
+  const {
+    data,
+    setData,
+    setCurrentIndex,
+    setGameStatus,
+    setResults,
+    setError,
+    errorRef,
+  } = useGame();
 
   const currentIndexRef = useRef(0);
+
   const incorrectIndexRef = useRef(0);
   const maxErrors = 30;
 
@@ -62,7 +69,8 @@ export function useWordEngine(diff: GameDiff, status: GameStatus) {
         incorrectIndexRef.current += 1;
         if (incorrectIndexRef.current >= maxErrors) {
           setGameStatus("finished");
-          toast.error("Test invalid-accuracy");
+          errorRef.current = "Too many errors! Game over";
+          setError("Too many errors, Game Over");
         }
       }
       if (currentIndexRef.current >= wordArray.length - 1) {
@@ -78,7 +86,15 @@ export function useWordEngine(diff: GameDiff, status: GameStatus) {
     return () => {
       window.removeEventListener("keydown", handleKeyInput);
     };
-  }, [status, data, setCurrentIndex, setGameStatus, setResults]);
+  }, [
+    status,
+    data,
+    setCurrentIndex,
+    setError,
+    errorRef,
+    setGameStatus,
+    setResults,
+  ]);
 
   return { data, currentIndexRef, incorrectIndexRef };
 }
