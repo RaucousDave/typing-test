@@ -1,4 +1,10 @@
-import React, { createContext, useRef, useState, type RefObject } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 
 /* 
 Things to consider when building a typing game: 
@@ -22,7 +28,7 @@ type GameState = {
   error: string;
   data: string;
   time: number;
-
+  beatHighScore: boolean;
   gameMode: GameMode;
   gameDiff: GameDiff;
   typingTime: number;
@@ -41,7 +47,7 @@ type GameActions = {
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
   setTime: React.Dispatch<React.SetStateAction<number>>;
-  // setHighScore: React.Dispatch<React.SetStateAction<number>>
+  setBeatHighScore: React.Dispatch<React.SetStateAction<boolean>>;
   setGameMode: React.Dispatch<React.SetStateAction<GameMode>>;
   setGameDiff: React.Dispatch<React.SetStateAction<GameDiff>>;
   setGameStatus: React.Dispatch<React.SetStateAction<GameStatus>>;
@@ -69,11 +75,8 @@ export function GameContextProvider({
   const [accuracy, setAccuracy] = useState(0);
   const [wpm, setWpm] = useState(0);
   const [error, setError] = useState("");
-  const beatHighScore = !localStorage.getItem("high_score");
 
-  if (beatHighScore) {
-    localStorage.setItem("high_score", "0");
-  }
+  const [beatHighScore, setBeatHighScore] = useState(false);
 
   const [data, setData] = useState("");
   const errorRef = useRef<string | null>(null);
@@ -85,6 +88,26 @@ export function GameContextProvider({
     localStorage.setItem("first_time", "true");
   }
 
+  useEffect(() => {
+    if (!localStorage.getItem("high_score")) {
+      localStorage.setItem("high_score", "0");
+    }
+  }, []);
+
+  useEffect(() => {
+    const calculateHighScore = () => {
+      if (gameStatus !== "finished") {
+        return;
+      }
+      const storedHighScore = parseInt(localStorage.getItem("high_score"));
+
+      if (wpm > storedHighScore) {
+        setBeatHighScore(true);
+      }
+    };
+    calculateHighScore();
+  }, [gameStatus, wpm]);
+
   return (
     <GameContext.Provider
       value={{
@@ -93,6 +116,8 @@ export function GameContextProvider({
         errorRef,
         setCurrentIndex,
         setCharacters,
+        beatHighScore,
+        setBeatHighScore,
         data,
         error,
         setError,

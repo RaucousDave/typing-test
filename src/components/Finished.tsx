@@ -8,20 +8,7 @@ export default function Finished() {
 
   const correct = results.filter((result) => result === "correct").length;
   const incorrect = results.length - correct;
-  const finishedStats = [
-    { text: "WPM", value: wpm, style: "text-white" },
-    { text: "Accuracy", value: `${accuracy}%`, style: "text-red-500" },
-    {
-      text: "Characters",
-      render: (
-        <>
-          <span className="text-green-500">{correct}</span>
-          <span className="text-neutral-500">/</span>
-          <span className="text-red-500">{incorrect}</span>
-        </>
-      ),
-    },
-  ];
+
   return (
     <div className="flex flex-col relative justify-center  overflow-hidden gap-5 items-center">
       <img
@@ -47,19 +34,7 @@ export default function Finished() {
           : "Solid run. Keep pushing to beat your high score"}
       </p>
 
-      <div className="grid grid-cols-3 gap-4">
-        {finishedStats.map((finishedStat, i) => (
-          <div
-            key={i}
-            className="text-left px-5 border-2 border-neutral-800 py-1 rounded-lg space-y-2"
-          >
-            <h1 className="text-neutral-500 text-lg">{finishedStat.text}</h1>
-            <p className={`font-semibold text-2xl ${finishedStat.style ?? ""}`}>
-              {finishedStat.value ?? finishedStat.render}
-            </p>
-          </div>
-        ))}
-      </div>
+      <div className="grid grid-cols-3 gap-4"></div>
       <button
         onClick={() => {
           setGameStatus("idle");
